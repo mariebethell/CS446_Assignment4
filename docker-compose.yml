@@ -1,19 +1,42 @@
 services:
   webapp:
     build: .
+    container_name: webapp
     ports:
       - "5000:5000"
     environment:
       - REDIS_HOST=redis
-      - REDIS_PORT=6379
+
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 5s
+      retries: 3
+    networks:
+      - ml-network
+
   redis:
     image: "redis:alpine"
+    container_name: redis
     ports: 
       - "6379:6379"
     hostname: redis
     volumes:
       - redis-data:/data 
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 3
+    networks:
+      - ml-network
+
 
 volumes:
   redis-data:
     driver: local
+
+networks:
+  ml-network:
+    driver: bridge

@@ -21,6 +21,9 @@ r = redis.Redis(host=redis_host, port=6379, db=0, decode_responses=True)
 def index():
     return render_template('index.html')
 
+@app.route('/health')
+def health():
+    return "OK", 200
 
 @app.route('/predict', methods=['POST'])
 def predict():

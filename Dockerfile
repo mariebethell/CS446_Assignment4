@@ -21,6 +21,9 @@ CMD ["python", "-u", "app.py"]
 # STAGE 2
 FROM python:3.11-slim
 
+# Install curl for healthcheck
+RUN apt-get update && apt-get install -y curl
+
 # Create same user with same UID
 RUN useradd -m -u 1001 appuser
 
